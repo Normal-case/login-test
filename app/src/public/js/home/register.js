@@ -1,16 +1,22 @@
 'use strict'
 
 const id = document.querySelector('#id'),
+    name = document.querySelector('#name'),
     password = document.querySelector('#password'),
-    loginbtn = document.querySelector('#button')
+    confirmPassword = document.querySelector('#confirm-password'),
+    registerbtn = document.querySelector('#button')
 
-const login = () => {
+const register = () => {
+    if(!id.value) return alert('Please input id')
+    if(password !== confirmPassword) return alert('password does not match')
+    
     const req = {
         id: id.value,
+        name: name.value,
         password: password.value,
     }
 
-    fetch('/login', {
+    fetch('/register', {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -20,7 +26,7 @@ const login = () => {
     .then((res) => res.json())
     .then((res) => {
         if (res.success) {
-            location.href = '/'
+            location.href = '/login'
         } else {
             alert(res.msg)
         }
@@ -31,5 +37,5 @@ const login = () => {
 }
     
 
-loginbtn.addEventListener('click', login)
+registerbtn.addEventListener('click', register)
 
