@@ -14,14 +14,24 @@ class UserStorage {
         return userInfo
     }
 
-    static getUsers = (...fields) => {
-        const newUsers = fields.reduce((newUser, field) => {
+    static #getUsers(data, isAll, fields) {
+        const users = JSON.parse(data)
+        if(isAll) return users
+        const newUsers = fields.reduce((newUsers, field) => {
             if (users.hasOwnProperty(field)) {
-                newUser[field] = users[field]
+                newUsers[field] = users[field]
             }
-            return newUser
+            return newUsers
         }, {})
         return newUsers
+    }
+
+    static getUsers = (isAll, ...fields) => {
+        return fs.readFile('./src/databases/loginApp/users.json')
+                .then((data) => {
+                    return this.#getUsers(data, isAll, fields)
+                })
+                .catch(console.error)
     }
 
     static getUserInfo(id) {
@@ -32,10 +42,15 @@ class UserStorage {
             .catch(console.error)
     }
 
-    static save(userInfo) {
+    static async save(userInfo) {
+        const users = await this.getUsers(true)
+        if (users.id.includes(userInfo.id)) {
+            throw 'Id is already exist'
+        }
         users.id.push(userInfo.id)
         users.name.push(userInfo.name)
         users.password.push(userInfo.password)
+        fs.writeFile('./src/databases/loginApp/users.json', JSON.stringify(users))
         return { success: true }
     }
 }

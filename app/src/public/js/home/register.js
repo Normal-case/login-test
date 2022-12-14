@@ -8,7 +8,7 @@ const id = document.querySelector('#id'),
 
 const register = () => {
     if(!id.value) return alert('Please input id')
-    if(password !== confirmPassword) return alert('password does not match')
+    if(password.value !== confirmPassword.value) return alert('password does not match')
     
     const req = {
         id: id.value,
